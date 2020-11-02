@@ -11,6 +11,7 @@ class Node:
 
 class Graph:
     nodes = {}
+    visited = []
 
     def add_node(self, node):
         if isinstance(node, Node) and node.name not in self.nodes:
@@ -34,48 +35,21 @@ class Graph:
         for key in self.nodes.keys():
             print(str(key) + str([nb.name for nb in self.nodes[key].neighbours]) + " ")
 
-    #BFS graph traversal, print all nodes in graph
-    def bfs_traversal(self, node):
-        queue = list()
-        visited = list()
-        visited.append(node.name)
-
+    #DFS graph traversal, print all nodes in graph
+    #DFS implemented recursivelly
+    def dfs_has_path(self, node):
+        node.visited = True
         for nb in node.neighbours:
-            queue.append(nb)
-        print(visited)
-        while len(queue) > 0:
-            print('visited:')
-            print(visited)
-            print('queueu' + str([node.name for node in queue]))
-            node_u = queue.pop(0)
-            print("popped node:" + str(node_u.name))
-            #visited.append(node_u.name)
-            for v in node_u.neighbours:
-                if v.name not in visited:
-                    queue.append(v)
-                    visited.append(v.name)
-        return sorted(visited)
+            if self.nodes[nb.name].visited == False:
+                self.dfs_has_path(self.nodes[nb.name])
 
-    #find the shortest path in graph with BFS
-    def bfs_shortest_path(self, start_node, dest_node):
-        queue = list()
-        leng = len(self.nodes.keys())
-        distances = [-1]*leng
-        queue.append(start_node)
-        distances[start_node.name] = 0
-
-        while len(queue) > 0:
-
-            current = queue.pop(0)
-            print('current: ' + str(current.name))
-            for nb in current.neighbours:
-                if distances[nb.name] == -1:
-                    distances[nb.name] = distances[current.name] + 1
-                    queue.append(nb)
-
-        return distances[dest_node.name]
+        self.visited.append(node.name)
+        node.visited = True
 
 
+    def dfs(self, node):
+        self.dfs_has_path(node)
+        return self.visited
 
 node0 = Node(0)
 node1 = Node(1)
@@ -111,6 +85,5 @@ graph.add_edge(node6, node5)
 graph.add_edge(node5, node4)
 
 graph.print_graph()
-print(graph.bfs_traversal(node0))
-print('BFS:')
-print(graph.bfs_shortest_path(node0, node8))
+print(graph.dfs(node0))
+
